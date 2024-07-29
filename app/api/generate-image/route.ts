@@ -12,6 +12,10 @@ export async function POST(request: Request) {
     const robotoBoldPath = path.resolve('./public/fonts/Roboto-Bold.ttf');
     registerFont(robotoRegularPath, { family: 'Roboto', weight: 'normal' });
     registerFont(robotoBoldPath, { family: 'Roboto', weight: 'bold' });
+    const notoSansKRRegularPath = path.resolve('./public/fonts/NotoSansKR-Regular.ttf');
+    const notoSansKRBoldPath = path.resolve('./public/fonts/NotoSansKR-Bold.ttf');
+    registerFont(notoSansKRRegularPath, { family: 'Noto Sans KR', weight: 'normal' });
+    registerFont(notoSansKRBoldPath, { family: 'Noto Sans KR', weight: 'bold' });
 
     // Create a larger canvas for higher resolution
     const scale = 3; // 3x resolution
@@ -39,17 +43,17 @@ export async function POST(request: Request) {
     roundRect(ctx, 25, 25, 450, 450, 15);
 
     // Add author name and username
-    ctx.font = 'bold 24px Roboto';
+    ctx.font = 'bold 24px "Noto Sans KR"';
     ctx.fillStyle = '#27292b';
     ctx.fillText(userId + '( ' + author + ' )'  || 'Unknown Author', 40, 60);
 
     // Add tweet text
-    ctx.font = '18px Roboto';
+    ctx.font = '18px "Noto Sans KR"';
     ctx.fillStyle = '#14171A';
     wrapText(ctx, tweetText, 40, 90, 420, 30);
 
     // Add X.com logo (you might want to replace this with an actual logo image)
-    ctx.font = 'bold 16px Roboto';
+    ctx.font = 'bold 16px "Noto Sans KR"';
     ctx.fillStyle = '#657786';  // X.com light gray
     ctx.fillText('Posted on X.com : ' + dateTime, 40, 460);
 
