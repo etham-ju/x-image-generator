@@ -1,8 +1,17 @@
 import { NextResponse } from 'next/server';
-import { createCanvas, loadImage, CanvasRenderingContext2D } from 'canvas';
+import { createCanvas, registerFont, CanvasRenderingContext2D } from 'canvas';
+import path from 'path';
 
 export async function POST(request: Request) {
-    const { tweetText, author } = await request.json();
+    const { tweetText, author, userId, dateTime } = await request.json();
+
+    console.log('tweetText', tweetText);
+
+    // Register the Roboto font
+    const robotoRegularPath = path.resolve('./public/fonts/Roboto-Regular.ttf');
+    const robotoBoldPath = path.resolve('./public/fonts/Roboto-Bold.ttf');
+    registerFont(robotoRegularPath, { family: 'Roboto', weight: 'normal' });
+    registerFont(robotoBoldPath, { family: 'Roboto', weight: 'bold' });
 
     // Create a larger canvas for higher resolution
     const scale = 3; // 3x resolution
@@ -30,19 +39,19 @@ export async function POST(request: Request) {
     roundRect(ctx, 25, 25, 450, 450, 15);
 
     // Add author name and username
-    ctx.font = 'bold 24px Arial';
+    ctx.font = 'bold 24px Roboto';
     ctx.fillStyle = '#27292b';
-    ctx.fillText(author || 'Unknown Author', 40, 60);
+    ctx.fillText(userId + '( ' + author + ' )'  || 'Unknown Author', 40, 60);
 
     // Add tweet text
-    ctx.font = '20px Arial';
+    ctx.font = '18px Roboto';
     ctx.fillStyle = '#14171A';
-    wrapText(ctx, tweetText, 40, 100, 420, 30);
+    wrapText(ctx, tweetText, 40, 90, 420, 30);
 
     // Add X.com logo (you might want to replace this with an actual logo image)
-    ctx.font = 'bold 16px Arial';
+    ctx.font = 'bold 16px Roboto';
     ctx.fillStyle = '#657786';  // X.com light gray
-    ctx.fillText('Posted on X.com', 40, 460);
+    ctx.fillText('Posted on X.com : ' + dateTime, 40, 460);
 
     const buffer = canvas.toBuffer('image/png');
 
@@ -52,23 +61,28 @@ export async function POST(request: Request) {
 }
 
 function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number) {
-    const words = text.split(' ');
-    let line = '';
+    const lines = text.split('\n'); // 줄바꿈을 기준으로 텍스트를 분리합니다.
     let currentY = y;
 
-    for (let n = 0; n < words.length; n++) {
-        const testLine = line + words[n] + ' ';
-        const metrics = ctx.measureText(testLine);
-        const testWidth = metrics.width;
-        if (testWidth > maxWidth && n > 0) {
-            ctx.fillText(line, x, currentY);
-            line = words[n] + ' ';
-            currentY += lineHeight;
-        } else {
-            line = testLine;
+    lines.forEach(line => {
+        const words = line.split(' ');
+        let currentLine = '';
+
+        for (let n = 0; n < words.length; n++) {
+            const testLine = currentLine + words[n] + ' ';
+            const metrics = ctx.measureText(testLine);
+            const testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+                ctx.fillText(currentLine, x, currentY);
+                currentLine = words[n] + ' ';
+                currentY += lineHeight;
+            } else {
+                currentLine = testLine;
+            }
         }
-    }
-    ctx.fillText(line, x, currentY);
+        ctx.fillText(currentLine, x, currentY);
+        currentY += lineHeight; // 각 줄이 끝날 때마다 줄 간격을 추가합니다.
+    });
 }
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
