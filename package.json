@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/font": "^14.2.5",
     "axios": "^1.7.2",
     "canvas": "^2.11.2",
     "cheerio": "^1.0.0-rc.12",

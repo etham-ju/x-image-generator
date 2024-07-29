@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { Roboto } from '@next/font/google';
+import { Noto_Sans_KR } from 'next/font/google';
 
-const roboto = Roboto({
+const notoSansKR = Noto_Sans_KR({
     weight: ['400', '700'],
     subsets: ['latin'],
 });
@@ -21,7 +21,7 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body className="bg-gray-100 min-h-screen">
-        <main className="container mx-auto p-4 {roboto.className}">
+        <main className="container mx-auto p-4 {notoSansKR.className}">
             {children}
         </main>
         </body>
